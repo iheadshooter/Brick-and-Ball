@@ -1,0 +1,52 @@
+<canvas id = "ctx" width = "900" height = "900" style = "border:1px solid #000000;"> </canvas>
+
+<script> 
+    var ctx = document.getElementById("ctx").getContext("2d");
+    //console.log(ctx);
+    //ctx.fillText("Hello World", 50, 50);
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "red";
+    ctx.globalAlpha = 0.5;
+
+    ctx.fillText("Hello", 50, 50);
+    ctx.fillRect(57, 57, 100, 100);
+    ctx.clearRect(75, 75, 100, 100);
+
+    HEIGHT = 900
+    WIDTH = 900
+
+    // player
+    player_text = "P"
+    player_x = 30
+    player_y = 60
+    player_vx = 12
+    player_vy = 30
+
+
+    // enemy
+    enemy_text = "E"
+    enemy_x = 67
+    enemy_y = 12
+    enemy_vx = 55
+    enemy_vy = 9
+
+    setInterval(update, 40)
+
+    function update() {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT)
+        ctx.fillText(player_text, player_x, player_y)
+        ctx.fillText(enemy_text, enemy_x, enemy_y)
+
+        player_x += player_vx
+        player_y += player_vy
+        player_x %= WIDTH
+        player_y %= HEIGHT
+
+        enemy_x += enemy_vx
+        enemy_y += enemy_vy
+        enemy_x %= WIDTH
+        enemy_y %= HEIGHT
+    }
+
+
+</script>
