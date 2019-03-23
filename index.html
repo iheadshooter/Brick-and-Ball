@@ -10,11 +10,58 @@ var ctx = canvas.getContext("2d");
 var x = 240
 var y = 160
 var dx = 2
-var dy = -2
+var dy = 3
+var ball_radius = 10
+var paddle_width = 90
+var paddle_height = 15
+
+var paddle_speed = 3
+var paddle_x = canvas.width / 2 - paddle_width / 2
+var paddle_y = canvas.height - paddle_height
+var right_pressed = false
+var left_pressed = false
+
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+function keyDownHandler(e) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
+        right_pressed = true;
+    }
+    if (e.key == "Left" || e.key == "ArrowLeft") {
+        left_pressed = true;
+    }
+}
+
+function keyUpHandler(e) {
+    if (e.key == "Right" || e.key == "ArrowRight") {
+        right_pressed = false;
+    }
+    if (e.key == "Left" || e.key == "ArrowLeft") {
+        left_pressed = false;
+    }
+}
+
+function drawWall() {
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.9)";
+    ctx.stroke();
+    ctx.closePath();
+}
+
+function drawPaddle() {
+    ctx.beginPath();
+    ctx.rect(paddle_x, paddle_y, paddle_width, paddle_height);
+    ctx.fillStyle = "rgba(126, 123, 240, 0.74)";
+    ctx.fill();
+    ctx.closePath();
+}
 
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, 10, 0, Math.PI * 2, false);
+    ctx.arc(x, y, ball_radius, 0, Math.PI * 2, false);    
     ctx.fillStyle = "rgba(0, 0, 255, 0.7)";
     ctx.fill();
     ctx.closePath();
@@ -22,9 +69,31 @@ function drawBall() {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawWall();
     drawBall();
+    drawPaddle();
+    if (right_pressed == true) {
+        if (paddle_x + paddle_width + paddle_speed < canvas.width) {
+            paddle_x += paddle_speed
+        } else {
+            paddle_x = canvas.width - paddle_width;
+        }
+    }
+    if (left_pressed == true) {
+        if (paddle_x - paddle_speed > 0) {
+            paddle_x -= paddle_speed;
+        } else {
+            paddle_x = 0;
+        }
+    }
+    if (x + ball_radius + dx > canvas.width || x - ball_radius + dx < 0) {
+        dx *= -1;
+    }
+    if (y + ball_radius + dy > canvas.height || y - ball_radius + dy < 0) {
+        dy *= -1;
+    }
     x += dx
-    y += dx
+    y += dy
 }
 
 setInterval(draw, 10);
