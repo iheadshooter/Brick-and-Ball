@@ -30,12 +30,22 @@ var brick_left_offset = 6;
 var brick_rows = 3;
 var brick_coloumns = 7;
 
+var score = 0;
+
 interval = setInterval(draw, 10);
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 var bricks = []
+
+function mouseMoveHandler(e) {
+    var relativeX = e.clientX - canvas.offsetLeft;
+    if(relativeX > 0 && relativeX < canvas.width) {
+        paddle_x = relativeX - paddle_width / 2;
+    }
+}
 
 for (var c = 0 ; c < brick_coloumns ; c++) {
     bricks[c] = []
@@ -44,12 +54,22 @@ for (var c = 0 ; c < brick_coloumns ; c++) {
     }
 }
 
+function draw_score() {
+    ctx.beginPath();
+    ctx.font = "18px Aerial";
+    ctx.fillStyle = "rgba(255, 255, 11, 1)";
+    ctx.fillText("Score : " + score, 15, 15);
+    ctx.closePath();
+}
+
 function draw_bricks() {
     for (var c = 0 ; c < brick_coloumns ; c++) {
         for (var r = 0 ; r < brick_rows ; r++) {
             if (bricks[c][r].status == true) {
                 var brick_x = c * (brick_width + brick_padding) + brick_left_offset;
                 var brick_y = r * (brick_height + brick_padding) + brick_top_offset;
+                bricks[c][r].x = brick_x;
+                bricks[c][r].y = brick_y;
                 ctx.beginPath();
                 ctx.rect(brick_x, brick_y, brick_width, brick_height);
                 ctx.fillStyle = "rgba(255, 127, 64, 0.64)";
@@ -113,6 +133,12 @@ function collision_detection() {
                     //dx = -dx;
                     //cosole.log(dy);
                     bricks[c][r].status = false;
+                    score++;
+                    if (score == brick_rows * brick_coloumns) {
+                        alert("You Win the Game");
+                        document.location.reload();
+                        clearInterval(interval);
+                    }
                 }
             }
         }
@@ -127,6 +153,7 @@ function draw() {
     drawPaddle();
     draw_bricks();
     collision_detection();
+    draw_score();
     if (right_pressed == true) {
         if (paddle_x + paddle_width + paddle_speed < canvas.width) {
             paddle_x += paddle_speed
