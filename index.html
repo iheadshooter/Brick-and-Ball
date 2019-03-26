@@ -8,22 +8,57 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 var x = 240
-var y = 160
+var y = 320 - 60
 var dx = 2
-var dy = 3
+var dy = -2
 var ball_radius = 10
+
+
 var paddle_width = 90
 var paddle_height = 15
-
 var paddle_speed = 3
 var paddle_x = canvas.width / 2 - paddle_width / 2
 var paddle_y = canvas.height - paddle_height
 var right_pressed = false
 var left_pressed = false
 
+var brick_width = 60;
+var brick_height = 30;
+var brick_padding = 6;
+var brick_top_offset = 60;
+var brick_left_offset = 6;
+var brick_rows = 3;
+var brick_coloumns = 7;
+
+interval = setInterval(draw, 10);
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+
+var bricks = []
+
+for (var c = 0 ; c < brick_coloumns ; c++) {
+    bricks[c] = []
+    for (var r = 0 ; r < brick_coloumns ; r++) {
+        bricks[c][r] = {x : 0, y : 0, status : true};
+    }
+}
+
+function draw_bricks() {
+    for (var c = 0 ; c < brick_coloumns ; c++) {
+        for (var r = 0 ; r < brick_rows ; r++) {
+            if (bricks[c][r].status == true) {
+                var brick_x = c * (brick_width + brick_padding) + brick_left_offset;
+                var brick_y = r * (brick_height + brick_padding) + brick_top_offset;
+                ctx.beginPath();
+                ctx.rect(brick_x, brick_y, brick_width, brick_height);
+                ctx.fillStyle = "rgba(255, 127, 64, 0.64)";
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+}
 
 function keyDownHandler(e) {
     if (e.key == "Right" || e.key == "ArrowRight") {
@@ -67,11 +102,31 @@ function drawBall() {
     ctx.closePath();
 }
 
+
+function collision_detection() {
+    for (var c = 0 ; c < brick_coloumns ; c++) {
+        for (var r = 0 ; r < brick_rows ; r++) {
+            if (bricks[c][r].status == true) {
+                if (x > bricks[c][r].x && x < bricks[c][r].x + brick_width && y > bricks[c][r].y && y < bricks[c][r].y + brick_height) {
+                    console.log("collision");
+                    dy = -dy;
+                    //dx = -dx;
+                    //cosole.log(dy);
+                    bricks[c][r].status = false;
+                }
+            }
+        }
+    }
+}
+
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawWall();
     drawBall();
     drawPaddle();
+    draw_bricks();
+    collision_detection();
     if (right_pressed == true) {
         if (paddle_x + paddle_width + paddle_speed < canvas.width) {
             paddle_x += paddle_speed
@@ -104,7 +159,5 @@ function draw() {
     x += dx
     y += dy
 }
-
-interval = setInterval(draw, 10);
 
 </script> 
