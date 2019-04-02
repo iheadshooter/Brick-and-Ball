@@ -1,4 +1,2 @@
 # sp_game
-Single Player Game Using Node JS
-
-hi all
+Single Player Game Using HTML5 Canvas and Javascript
